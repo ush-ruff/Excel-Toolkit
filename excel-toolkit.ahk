@@ -1,6 +1,6 @@
 ; Excel Toolkit
 ; Press Win + ` to toggle the hotstrings off
-; Script v1.2.1
+; Script v1.3.0
 
 #Requires AutoHotkey v2.0
 #SingleInstance Force
@@ -11,6 +11,7 @@ SetWorkingDir A_ScriptDir
 ; ----------------------------------------
 A_TrayMenu.Delete()
 A_TrayMenu.Add("Open", (*) => Edit())
+A_TrayMenu.Add("Edit Snippets", (*) => Run(A_ScriptDir "\snippets.ini"))
 A_TrayMenu.Add("Toggle Hotstrings", (*) => ToggleHotstrings())
 A_TrayMenu.Add()
 A_TrayMenu.Add("Reload Script", (*) => Reload())
