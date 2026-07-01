@@ -1,6 +1,6 @@
 ; Excel Toolkit
 ; Press Win + ` to toggle the hotstrings off
-; Script v1.3.1
+; Script v1.4.0
 
 #Requires AutoHotkey v2.0
 #SingleInstance Force
@@ -20,6 +20,9 @@ A_TrayMenu.Add("Exit", (*) => ExitApp())
 A_TrayMenu.Default := "Open"
 
 A_IconTip := "Excel Toolkit - Hotstrings ENABLED"
+iconPath := A_ScriptDir "\icon\shortcut-icon.ico"
+if FileExist(iconPath)
+  TraySetIcon iconPath
 
 ; ------------------------------------------------------------
 ; Global Variables
