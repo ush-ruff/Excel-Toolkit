@@ -1,6 +1,10 @@
-# Excel Toolkit ![Version](https://img.shields.io/badge/version-1.4.0-blue)
+# Excel Toolkit 
+
+![Version](https://img.shields.io/badge/version-1.4.0-blue)
+[![Download](https://img.shields.io/badge/download-latest-green)](https://github.com/ush-ruff/Excel-Toolkit/releases/latest)
 
 > AutoHotkey v2 script that supercharges Microsoft Excel with custom keyboard shortcuts, text-expansion hotstrings, and formatting helpers.
+
 
 ## Quick Start
 
@@ -8,6 +12,7 @@
 - **Source** — Double-click `excel-toolkit.ahk` (requires [AutoHotkey v2](https://www.autohotkey.com/))
 
 Shortcuts are active only when an Excel window is focused.
+
 
 ## Features
 
@@ -48,6 +53,7 @@ Right-click the tray icon to access:
 | Pause Hotkeys | Suspend all hotkeys |
 | Exit | Quit the script |
 
+
 ## Compiling from Source (Portable Method)
 
 Generate `excel-toolkit.exe` yourself without installing AutoHotkey:
@@ -64,6 +70,7 @@ Generate `excel-toolkit.exe` yourself without installing AutoHotkey:
    ```
    The resulting `.exe` is fully standalone — no runtime needed.
 
+
 ## Generating Docs
 
 ```
@@ -71,6 +78,27 @@ python gen-shortcuts.py
 ```
 
 Regenerates `shortcuts.md` from the `; Key:` comments in the AHK source.
+
+
+## Running on Startup
+
+To launch the script automatically on Windows startup:
+
+1. Press **Win + R** and type
+   ```
+   shell:startup
+   ```
+
+2. Press Enter and place either:
+   - `excel-toolkit.ahk`, or
+   - the compiled `.exe` (recommended) — [download from releases](https://github.com/ush-ruff/Excel-Toolkit/releases/latest)
+   
+   > a shortcut to either of those files will also work
+
+3. Place the `snippets.ini` in the same folder
+
+The script will now start automatically when you log in.
+
 
 ## License
 
