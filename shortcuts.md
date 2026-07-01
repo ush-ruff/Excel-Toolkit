@@ -5,15 +5,15 @@
 |Ctrl + Alt + M|Merge across selection|
 |Ctrl + Alt + Shift + M|Merge|
 |Ctrl + Shift + M|Unmerge cells|
-|Ctrl + Alt + F|Clear fill|
-|Ctrl + Alt + G|Blue fill|
-|Ctrl + Alt + Y|Red fill|
-|Ctrl + Alt + E|White fill|
-|Ctrl + Alt + I|Light blue fill|
-|Ctrl + Alt + W|Automatic font color|
-|Ctrl + Alt + L|Blue font|
-|Ctrl + Alt + R|Red font|
-|Ctrl + Alt + Q|White font|
+|Ctrl + Alt + Numpad0|Clear fill|
+|Ctrl + Alt + Numpad1|Light blue fill|
+|Ctrl + Alt + Numpad2|Rose fill|
+|Ctrl + Alt + Numpad3|Gray fill|
+|Ctrl + Alt + Numpad4|Red fill|
+|Ctrl + Shift + Numpad0|Automatic font color|
+|Ctrl + Shift + Numpad1|Blue font|
+|Ctrl + Shift + Numpad2|Red font|
+|Ctrl + Shift + Numpad3|White font|
 |Ctrl + Alt + Z|Wrap text toggle|
 |Ctrl + Alt + Left|Left align|
 |Ctrl + Alt + Right|Right align|
@@ -23,13 +23,13 @@
 |Ctrl + Shift + C|Middle align|
 |Ctrl + Alt + NumpadAdd|Increase font size by 1|
 |Ctrl + Alt + NumpadSub|Decrease font size by 1|
-|Ctrl + Alt + Numpad1|Set Number Format|
-|Ctrl + Alt + Numpad2|General format|
-|Ctrl + Alt + Numpad3|Percentage format|
-|Ctrl + Alt + 4|Date format|
+|Ctrl + Win + Numpad1|Set Number Format|
+|Ctrl + Win + Numpad2|General format|
+|Ctrl + Win + Numpad3|Percentage format|
+|Ctrl + Win + 4|Date format|
 |Ctrl + Alt + Shift + B|Remove borders|
 |Ctrl + Alt + B|Outside borders|
-|Ctrl + Shift + B|Set Borders|
+|Ctrl + Shift + B|All borders|
 |Ctrl + Alt + F9|Toggle freeze panes at active cell|
 |Ctrl + Alt + K|Clean format (remove fill, bold, wrap, reset font)|
 |Ctrl + Alt + A|AutoFit columns and rows for selection|

@@ -1,6 +1,6 @@
 ; Excel Toolkit
 ; Press Win + ` to toggle the hotstrings off
-; Script v1.1.0
+; Script v1.2.0
 
 #Requires AutoHotkey v2.0
 #SingleInstance Force
@@ -20,19 +20,21 @@ A_TrayMenu.Default := "Open"
 A_IconTip := "Excel Toolkit - Hotstrings ENABLED"
 
 ; ----------------------------------------
-; Register Hotstrings
+; Global Variables
 ; ----------------------------------------
 hotstringsEnabled := true
 Snippets := LoadSnippets(A_ScriptDir "\snippets.ini", "Excel")
 
-; Register hotstrings at startup
-if Snippets.Count > 0 {
-  HotIf 'WinActive("ahk_exe EXCEL.EXE")'
-  for trigger, expansion in Snippets {
-    Hotstring(":*:" trigger ";", Bind(ExpandOrLiteral, trigger, expansion))
-  }
-  HotIf ""
-}
+; Format: "name", "R, G, B"  — each value 0-255 (comma + space required)
+colors := Map(
+	"blue", "0, 0, 255",
+	"red", "192, 0, 0",
+	"white", "255, 255, 255",
+	"rose", "255, 204, 204",
+	"yellow", "255, 255, 0",
+	"gray", "217, 217, 217",
+	"light-blue", "221, 235, 247"
+)
 
 ; ----------------------------------------
 ; Shortcuts (active only when Excel is focused)
@@ -50,45 +52,45 @@ if Snippets.Count > 0 {
 
 ; Unmerge cells
 ; Key: Ctrl + Shift + M
-^+u::UnmergeCells()
+^+m::UnmergeCells()
 
 ; --- Fill Colors ---
 ; Clear fill
-; Key: Ctrl + Alt + F
-^!f::ClearFill()
-
-; Blue fill
-; Key: Ctrl + Alt + G
-^!g::SetFillColor("blue")
-
-; Red fill
-; Key: Ctrl + Alt + Y
-^!y::SetFillColor("red")
-
-; White fill
-; Key: Ctrl + Alt + E
-^!e::SetFillColor("white")
+; Key: Ctrl + Alt + Numpad0
+^!Numpad0::ClearFill()
 
 ; Light blue fill
-; Key: Ctrl + Alt + I
-^!i::SetFillColor("light-blue")
+; Key: Ctrl + Alt + Numpad1
+^!Numpad1::SetFillColor("light-blue")
+
+; Rose fill
+; Key: Ctrl + Alt + Numpad2
+^!Numpad2::SetFillColor("rose")
+
+; Gray fill
+; Key: Ctrl + Alt + Numpad3
+^!Numpad3::SetFillColor("gray")
+
+; Red fill
+; Key: Ctrl + Alt + Numpad4
+^!Numpad4::SetFillColor("red")
 
 ; --- Font Colors ---
 ; Automatic font color
-; Key: Ctrl + Alt + W
-^!w::SetFontColorAuto()
+; Key: Ctrl + Shift + Numpad0
+^+Numpad0::SetFontColorAuto()
 
 ; Blue font
-; Key: Ctrl + Alt + L
-^!l::SetFontColor("blue")
+; Key: Ctrl + Shift + Numpad1
+^+Numpad1::SetFontColor("blue")
 
 ; Red font
-; Key: Ctrl + Alt + R
-^!r::SetFontColor("red")
+; Key: Ctrl + Shift + Numpad2
+^+Numpad2::SetFontColor("red")
 
 ; White font
-; Key: Ctrl + Alt + Q
-^!q::SetFontColor("white")
+; Key: Ctrl + Shift + Numpad3
+^+Numpad3::SetFontColor("white")
 
 ; --- Text Toggles ---
 ; Wrap text toggle
@@ -130,20 +132,20 @@ if Snippets.Count > 0 {
 ^!NumpadSub::DecreaseFont()
 
 ; --- Number Formats ---
-; Key: Ctrl + Alt + Numpad1
-^!Numpad1::SetNumberFormat("Accounting")
+; Key: Ctrl + Win + Numpad1
+^#Numpad1::SetNumberFormat("Accounting")
 
 ; General format
-; Key: Ctrl + Alt + Numpad2
-^!Numpad2::SetNumberFormat("General")
+; Key: Ctrl + Win + Numpad2
+^#Numpad2::SetNumberFormat("General")
 
 ; Percentage format
-; Key: Ctrl + Alt + Numpad3
-^!Numpad3::SetNumberFormat("Percentage")
+; Key: Ctrl + Win + Numpad3
+^#Numpad3::SetNumberFormat("Percentage")
 
 ; Date format
-; Key: Ctrl + Alt + 4
-; ^!4::SetNumberFormat("yyyy-mm-dd")
+; Key: Ctrl + Win + 4
+; ^#4::SetNumberFormat("yyyy-mm-dd")
 
 ; --- Borders ---
 ; Remove borders
@@ -154,6 +156,7 @@ if Snippets.Count > 0 {
 ; Key: Ctrl + Alt + B
 ^!b::SetBorders("Outside")
 
+; All borders
 ; Key: Ctrl + Shift + B
 ^+b::SetBorders("All")
 
@@ -227,14 +230,10 @@ SetFontColor(val) {
 }
 
 SendColor(prefix, name) {
-  colors := Map(
-    "blue", "0{Tab}0{Tab}255",
-    "red", "255{Tab}0{Tab}0",
-    "white", "255{Tab}255{Tab}255",
-    "light-blue", "135{Tab}206{Tab}250"
-  )
-  if colors.Has(name)
-    SendKeys(prefix "{Right}{Tab}{Tab}{Tab}{Tab}" colors[name] "{Enter}")
+  if colors.Has(name) {
+    rgb := StrReplace(colors[name], ", ", "{Tab}")
+    SendKeys(prefix "{Right}{Tab}{Tab}{Tab}{Tab}" rgb "{Enter}")
+  }
 }
 
 ; ============================================================
@@ -345,7 +344,7 @@ LoadSnippets(file, section) {
   for rawLine in StrSplit(data, "`n", "`r") {
     line := Trim(rawLine)
 
-		; Skip empty lines and full-line comments
+    ; Skip empty lines and full-line comments
     if !line || SubStr(line, 1, 1) = ";" || SubStr(line, 1, 1) = "#"
       continue
 
@@ -380,4 +379,13 @@ ExpandOrLiteral(trigger, expansion, *) {
     return
   }
   Send expansion
+}
+
+; Register hotstrings at startup
+if Snippets.Count > 0 {
+  HotIf 'WinActive("ahk_exe EXCEL.EXE")'
+  for trigger, expansion in Snippets {
+    Hotstring(":*:" trigger ";", Bind(ExpandOrLiteral, trigger, expansion))
+  }
+  HotIf ""
 }
