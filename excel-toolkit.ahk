@@ -1,14 +1,38 @@
+; Excel Toolkit
+; Press Win + ` to toggle the hotstrings off
+; Script v1.1.0
+
 #Requires AutoHotkey v2.0
 #SingleInstance Force
+SetWorkingDir A_ScriptDir
 
 ; ----------------------------------------
 ; Tray configuration
 ; ----------------------------------------
 A_TrayMenu.Delete()
 A_TrayMenu.Add("Open", (*) => Edit())
+A_TrayMenu.Add("Toggle Hotstrings", (*) => ToggleHotstrings())
+A_TrayMenu.Add()
 A_TrayMenu.Add("Reload Script", (*) => Reload())
 A_TrayMenu.Add("Pause Hotkeys", (*) => Suspend())
 A_TrayMenu.Add("Exit", (*) => ExitApp())
+A_TrayMenu.Default := "Open"
+A_IconTip := "Excel Toolkit - Hotstrings ENABLED"
+
+; ----------------------------------------
+; Register Hotstrings
+; ----------------------------------------
+hotstringsEnabled := true
+Snippets := LoadSnippets(A_ScriptDir "\snippets.ini", "Excel")
+
+; Register hotstrings at startup
+if Snippets.Count > 0 {
+  HotIf 'WinActive("ahk_exe EXCEL.EXE")'
+  for trigger, expansion in Snippets {
+    Hotstring(":*:" trigger ";", Bind(ExpandOrLiteral, trigger, expansion))
+  }
+  HotIf ""
+}
 
 ; ----------------------------------------
 ; Shortcuts (active only when Excel is focused)
@@ -153,12 +177,19 @@ A_TrayMenu.Add("Exit", (*) => ExitApp())
 
 #HotIf
 
+; Toggle hotstrings globally
+#`::ToggleHotstrings()
+
 ; ============================================================
 ; Helper Functions
 ; ============================================================
 ; Exits edit mode then sends keystrokes (so they act on the sheet, not a cell)
 SendKeys(keys) {
   Send "{Esc}" keys
+}
+
+Bind(fn, args*) {
+  return (*) => fn(args*)
 }
 
 ; ============================================================
@@ -177,19 +208,14 @@ UnmergeCells() {
 }
 
 ; ============================================================
-; Fill & Font (COM — cosmetic, no undo)
+; Fill & Font
 ; ============================================================
 ClearFill() {
   SendKeys("!hhn")
 }
 
 SetFillColor(val) {
-  switch val {
-    case "blue": SendKeys("!hhm{Right}{Tab}{Tab}{Tab}{Tab}0{Tab}0{Tab}255{Enter}")
-    case "red": SendKeys("!hhm{Right}{Tab}{Tab}{Tab}{Tab}255{Tab}0{Tab}0{Enter}")
-    case "white": SendKeys("!hhm{Right}{Tab}{Tab}{Tab}{Tab}255{Tab}255{Tab}255{Enter}")
-    case "light-blue": SendKeys("!hhm{Right}{Tab}{Tab}{Tab}{Tab}135{Tab}206{Tab}250{Enter}")
-  }
+  SendColor("!hhm", val)
 }
 
 SetFontColorAuto() {
@@ -197,11 +223,18 @@ SetFontColorAuto() {
 }
 
 SetFontColor(val) {
-  switch val {
-    case "blue": SendKeys("!hfcm{Right}{Tab}{Tab}{Tab}{Tab}0{Tab}0{Tab}255{Enter}")
-    case "red": SendKeys("!hfcm{Right}{Tab}{Tab}{Tab}{Tab}255{Tab}0{Tab}0{Enter}")
-    case "white": SendKeys("!hfcm{Right}{Tab}{Tab}{Tab}{Tab}255{Tab}255{Tab}255{Enter}")
-  }
+  SendColor("!hfcm", val)
+}
+
+SendColor(prefix, name) {
+  colors := Map(
+    "blue", "0{Tab}0{Tab}255",
+    "red", "255{Tab}0{Tab}0",
+    "white", "255{Tab}255{Tab}255",
+    "light-blue", "135{Tab}206{Tab}250"
+  )
+  if colors.Has(name)
+    SendKeys(prefix "{Right}{Tab}{Tab}{Tab}{Tab}" colors[name] "{Enter}")
 }
 
 ; ============================================================
@@ -285,4 +318,66 @@ AutoFitSelection() {
 
 DeleteRow() {
   SendKeys("!hdr")
+}
+
+; ============================================================
+; Hotstring System
+; ============================================================
+ToggleHotstrings() {
+  global hotstringsEnabled
+  hotstringsEnabled := !hotstringsEnabled
+  state := hotstringsEnabled ? "ENABLED" : "DISABLED"
+  A_IconTip := "Excel Toolkit - Hotstrings " state
+  TrayTip "Excel Toolkit", "Hotstrings " state, 1
+}
+
+LoadSnippets(file, section) {
+  try {
+    data := IniRead(file, section)
+    if !data
+      return Map()
+  } catch {
+    return Map()
+  }
+
+  snippets := Map()
+
+  for rawLine in StrSplit(data, "`n", "`r") {
+    line := Trim(rawLine)
+
+		; Skip empty lines and full-line comments
+    if !line || SubStr(line, 1, 1) = ";" || SubStr(line, 1, 1) = "#"
+      continue
+
+    ; Remove inline comments (only if preceded by whitespace)
+    line := RegExReplace(line, "(?<=\S)\s+[#].*$")
+
+    if !InStr(line, "=")
+      continue
+
+    parts := StrSplit(line, "=", , 2)
+    trigger := Trim(parts[1])
+    expansion := LTrim(parts[2])
+
+    snippets[trigger] := DecodeEscapes(expansion)
+  }
+
+  return snippets
+}
+
+DecodeEscapes(str) {
+  str := StrReplace(str, "\s", " ")
+  str := StrReplace(str, "\S", Chr(0xA0))
+  str := StrReplace(str, "\t", "`t")
+  str := StrReplace(str, "\n", "`n")
+  return str
+}
+
+ExpandOrLiteral(trigger, expansion, *) {
+  global hotstringsEnabled
+  if !hotstringsEnabled {
+    Send trigger ";"
+    return
+  }
+  Send expansion
 }
