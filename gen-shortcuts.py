@@ -54,6 +54,7 @@ while i < len(lines):
 # Write output
 with open(out_file, "w", encoding="utf-8") as f:
     f.write("# Excel Toolkit Shortcuts\n\n")
+    f.write("![Shortcuts](images/shortcuts.png)\n\n")
     f.write("|Key|Action|\n")
     f.write("|---|---|\n")
     for key, action in rows:

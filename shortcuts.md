@@ -1,5 +1,7 @@
 # Excel Toolkit Shortcuts
 
+![Shortcuts](images/shortcuts.png)
+
 |Key|Action|
 |---|---|
 |Ctrl + Alt + M|Merge across selection|
